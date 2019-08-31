@@ -1,5 +1,7 @@
 package net.crow31415.emergencyNotification_app;
 
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -11,6 +13,9 @@ import androidx.appcompat.widget.Toolbar;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
+
+import net.crow31415.emergencyNotification_app.service.AccelerationMeasureService;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -21,12 +26,37 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Button startButton = findViewById(R.id.button_start);
+        Button stopButton = findViewById(R.id.button_stop);
+
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
+            }
+        });
+
+        // サービス開始
+        startButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent serviceIntent = new Intent(getApplication(), AccelerationMeasureService.class);
+                if(Build.VERSION.SDK_INT >= 26) {
+                    startForegroundService(serviceIntent);
+                }else{
+                    startService(serviceIntent);
+                }
+            }
+        });
+
+        // サービス停止
+        stopButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent serviceIntent = new Intent(getApplication(), AccelerationMeasureService.class);
+                stopService(serviceIntent);
             }
         });
     }

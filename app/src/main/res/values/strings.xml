@@ -1,4 +1,7 @@
 <resources>
-    <string name="app_name">EmergencyNotification-app</string>
+    <string name="app_name">EmergencyNotification</string>
     <string name="action_settings">Settings</string>
+    <string name="acceleration_measure_service_text">Measuring acceleration…</string>
+    <string name="btn_start_service">Service Start</string>
+    <string name="btn_stop_service">Service Stop</string>
 </resources>
