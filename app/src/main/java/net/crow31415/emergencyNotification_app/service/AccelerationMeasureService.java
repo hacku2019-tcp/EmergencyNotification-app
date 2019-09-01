@@ -1,14 +1,19 @@
 package net.crow31415.emergencyNotification_app.service;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 import net.crow31415.emergencyNotification_app.R;
 
@@ -19,6 +24,7 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
 
     private SensorManager sensorManager;
     private String logTAG;
+    private int emergencyThreshold = 30;
 
     @Override
     public void onCreate() {
@@ -30,7 +36,7 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(logTAG, "called AccelerationMeasureService.onStartCommand()");
-        String channelId = "service";
+        String channelId = "detection";
 
         // 通知設定
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), channelId)
@@ -38,6 +44,18 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
                 .setContentText(getResources().getString(R.string.acceleration_measure_service_text))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .build();
+
+        if (Build.VERSION.SDK_INT >= 26 ) {
+            CharSequence name = getString(R.string.channel_name_detection);
+            String description = getString(R.string.channel_description_detection);
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(channelId, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
 
         // フォアグラウンドで実行
         startForeground(1, notification);
@@ -48,11 +66,6 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
         if(sensorAcceleration != null){
             // センサーへのイベントリスナーを設定
             sensorManager.registerListener(this, sensorAcceleration, SensorManager.SENSOR_DELAY_NORMAL);
-        }
-        Sensor sensorGravity = sensorManager.getDefaultSensor(Sensor.TYPE_GRAVITY);
-        if(sensorGravity != null){
-            // センサーへのイベントリスナーを設定
-            sensorManager.registerListener(this, sensorGravity, SensorManager.SENSOR_DELAY_NORMAL);
         }
 
         return START_STICKY;
@@ -75,26 +88,29 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        switch (event.sensor.getType()){
-            case Sensor.TYPE_ACCELEROMETER:
-                float x = event.values[0];
-                float y = event.values[1];
-                float z = event.values[2];
-                Log.d(logTAG, "called AccelerationMeasureService.onSensorChanged (x:" + x + " y:" + y + " z:" + z + ")");
+        if(event.sensor.getType() == Sensor.TYPE_ACCELEROMETER){
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
 
-                double acceleration = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-                Log.d(logTAG, "acceleration: " + acceleration);
-                break;
+            double acceleration = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
+            Log.d(logTAG, "acceleration: " + acceleration);
 
-            case Sensor.TYPE_GRAVITY:
-                float g = event.values[0];
-                Log.d(logTAG, "called AccelerationMeasureService.onSensorChanged (g:" + g + ")");
-                Log.d(logTAG, "gravity: " + g);
+            if(acceleration >= emergencyThreshold){
+                Toast.makeText(getApplicationContext() , "転倒検知 acceleration: " + acceleration, Toast.LENGTH_LONG).show();
+                emergencyNotification();
+            }
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+    private void emergencyNotification(){
+        Log.d(logTAG, "called AccelerationMeasureService.emergencyNotification()");
+        Log.i(logTAG, "A fall was detected.");
 
     }
 }

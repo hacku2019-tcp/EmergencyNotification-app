@@ -5,4 +5,7 @@
     <string name="acceleration_measure_service_text">加速度計測中</string>
     <string name="btn_start_service">サービス起動</string>
     <string name="btn_stop_service">サービス終了</string>
+    <string name="emergency_msg">転倒を検知しました! 大丈夫ですか?</string>
+    <string name="channel_name_detection">検知中 通知</string>
+    <string name="channel_description_detection">転倒の検知中</string>
 </resources>
