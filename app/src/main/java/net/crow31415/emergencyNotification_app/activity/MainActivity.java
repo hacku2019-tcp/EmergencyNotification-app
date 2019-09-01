@@ -131,9 +131,8 @@ public class MainActivity extends AppCompatActivity {
         idTextView.setText("User ID: " + id);
     }
 
-    public void register(String token){
+    public void register(String noticeUserId){
         String userId = preferences.getString("id", null);
-        String noticeUserId = noticeUserEditText.getText().toString();
         String pushId = preferences.getString("token", null);
         if(pushId == null){
             getFirebaseToken();
