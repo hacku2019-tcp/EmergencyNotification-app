@@ -21,20 +21,60 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <EditText
-            android:id="@+id/token_edit_text"
+        <TextView
+            android:id="@+id/id_text_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:inputType="textNoSuggestions"
-            android:hint="ID" />
+            android:textSize="35sp"
+            android:textStyle="bold"
+            android:gravity="center_horizontal"/>
 
-        <Button
-            android:id="@+id/button_register"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center|bottom"
-            android:text="@string/btn_register" />
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/id_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:layout_marginBottom="20dp"
+                android:ems="10"
+                android:inputType="textNoSuggestions"
+                android:hint="Your ID" />
+
+            <Button
+                android:id="@+id/button_apply_id"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_apply" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <EditText
+                android:id="@+id/notice_user_edit_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3"
+                android:ems="10"
+                android:inputType="textNoSuggestions"
+                android:hint="ID" />
+
+            <Button
+                android:id="@+id/button_register"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/btn_register" />
+
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"

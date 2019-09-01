@@ -11,5 +11,6 @@
     <string name="text_fell_detected_2">Notification will be sent\n if you don\'t tap the button.</string>
     <string name="text_notification_sent">Notification was sent!!</string>
     <string name="btn_register">Register</string>
+    <string name="btn_apply">Apply</string>
 
 </resources>

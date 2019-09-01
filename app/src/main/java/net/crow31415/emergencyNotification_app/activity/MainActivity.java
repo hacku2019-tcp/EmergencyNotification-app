@@ -3,30 +3,44 @@ package net.crow31415.emergencyNotification_app.activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.util.Log;
 import android.view.View;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import net.crow31415.emergencyNotification_app.R;
 import net.crow31415.emergencyNotification_app.service.AccelerationMeasureService;
+import net.crow31415.emergencyNotification_app.util.HTTPSUtility;
+
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
     private final MainActivity self = this;
     private FirebaseAnalytics mAnalytics;
-    private EditText tokenEditText;
+    private String TAG;
+    private TextView idTextView;
+    private EditText idEditText;
+    private Button applyIDButton;
+    private EditText noticeUserEditText;
     private Button registerButton;
     private Button serviceButton;
+    private SharedPreferences preferences;
 
     private boolean serviceRunning = false;
 
@@ -38,16 +52,29 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mAnalytics = FirebaseAnalytics.getInstance(self);
-        tokenEditText = findViewById(R.id.token_edit_text);
+        TAG = getResources().getString(R.string.app_name);
+        idTextView = findViewById(R.id.id_text_view);
+        idEditText = findViewById(R.id.id_edit_text);
+        applyIDButton = findViewById(R.id.button_apply_id);
+        noticeUserEditText = findViewById(R.id.notice_user_edit_text);
         registerButton = findViewById(R.id.button_register);
         serviceButton = findViewById(R.id.button_toggle_service);
+        preferences = getSharedPreferences("net.crow31415.emergencyNotification_app.preferences", MODE_PRIVATE);
 
+        initID();
         checkServiceRunning();
+
+        applyIDButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                applyID(idEditText.getText().toString());
+            }
+        });
 
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                register(tokenEditText.getText().toString());
+                register(noticeUserEditText.getText().toString());
                 checkServiceRunning();
                 if(!serviceRunning){
                     startMeasureService();
@@ -86,7 +113,57 @@ public class MainActivity extends AppCompatActivity {
         stopService(serviceIntent);
     }
 
+    private void initID(){
+        if(preferences.getString("id", null) == null){
+            int r = (int)(Math.random() * 10000);
+            applyID(String.format(Locale.JAPAN, "NoID%5d", r));
+        }
+        applyID("");
+    }
+
+    private void applyID(String id){
+        if(!id.equals("")){
+            preferences.edit().putString("id", id).apply();
+
+            Log.d(TAG, "set ID: " + id);
+        }
+        id = preferences.getString("id", null);
+        idTextView.setText("User ID: " + id);
+    }
+
     public void register(String token){
+        String newUserId = preferences.getString("id", null);
+        String noticeUserId = noticeUserEditText.getText().toString();
+        String pushId = preferences.getString("token", null);
+        if(pushId == null){
+            getFirebaseToken();
+            pushId = preferences.getString("token", null);
+        }
+
+        String post = "apiType=register" + "&newUserId=" + newUserId + "&noticeUserId=" + noticeUserId + "&pushId=" + pushId;
+        HTTPSUtility https = new HTTPSUtility();
+        https.execute("https://hacku.dragon-egg.org/api", post);
+    }
+
+    public void getFirebaseToken(){
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w(TAG, "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        Log.d(TAG, "Firebase token: " + token);
+
+                        //Preferencesに自トークンを記録
+                        preferences.edit().putString("token", token).apply();
+                    }
+                });
 
     }
 

@@ -16,10 +16,13 @@ import net.crow31415.emergencyNotification_app.service.AccelerationMeasureServic
 
 import java.util.Locale;
 
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
+
 public class FellDetectedActivity extends AppCompatActivity {
 
     private TextView countText;
     private String logTAG;
+    private CountDown countDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,13 +40,15 @@ public class FellDetectedActivity extends AppCompatActivity {
             }
         });
 
-        CountDown countDown = new CountDown(30 * 1000, 100);
+        countDown = new CountDown(30 * 1000, 100);
         countDown.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        countDown.cancel();
 
         Intent serviceIntent = new Intent(getApplication(), AccelerationMeasureService.class);
         if(Build.VERSION.SDK_INT >= 26) {
@@ -53,8 +58,10 @@ public class FellDetectedActivity extends AppCompatActivity {
         }
     }
 
-    public void callAPI(){
-
+    public void sendNotification(){
+        Intent intent = new Intent(this, SendNotificationActivity.class)
+                .setFlags(FLAG_ACTIVITY_SINGLE_TOP);
+        startActivity(intent);
     }
 
     class CountDown extends CountDownTimer {
@@ -65,7 +72,7 @@ public class FellDetectedActivity extends AppCompatActivity {
 
         @Override
         public void onFinish() {
-            callAPI();
+            sendNotification();
             finish();
         }
 
