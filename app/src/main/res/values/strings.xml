@@ -9,5 +9,7 @@
     <string name="channel_description_detection">When it\'s detecting that you fell or not.</string>
     <string name="button_not_emergency">I\'m OK</string>
     <string name="text_fell_detected_2">Notification will be sent\n if you don\'t tap the button.</string>
+    <string name="text_notification_sent">Notification was sent!!</string>
+    <string name="btn_register">Register</string>
 
 </resources>

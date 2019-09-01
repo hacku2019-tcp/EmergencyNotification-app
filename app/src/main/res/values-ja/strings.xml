@@ -10,4 +10,6 @@
     <string name="channel_description_detection">転倒の検知中</string>
     <string name="button_not_emergency">大丈夫です</string>
     <string name="text_fell_detected_2">ボタンがタップされなければ\n通知が送信されます。</string>
+    <string name="text_notification_sent">通知を送信しました!</string>
+    <string name="btn_register">登録</string>
 </resources>

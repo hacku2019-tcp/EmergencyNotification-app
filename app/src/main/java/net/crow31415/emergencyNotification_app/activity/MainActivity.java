@@ -1,11 +1,11 @@
 package net.crow31415.emergencyNotification_app.activity;
 
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.EditText;
 
 import net.crow31415.emergencyNotification_app.R;
 import net.crow31415.emergencyNotification_app.service.AccelerationMeasureService;
@@ -23,6 +24,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final MainActivity self = this;
     private FirebaseAnalytics mAnalytics;
+    private EditText tokenEditText;
+    private Button registerButton;
+    private Button serviceButton;
+
+    private boolean serviceRunning = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,61 +38,83 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mAnalytics = FirebaseAnalytics.getInstance(self);
+        tokenEditText = findViewById(R.id.token_edit_text);
+        registerButton = findViewById(R.id.button_register);
+        serviceButton = findViewById(R.id.button_toggle_service);
 
-        Button startButton = findViewById(R.id.button_start);
-        Button stopButton = findViewById(R.id.button_stop);
+        checkServiceRunning();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        // サービス開始
-        startButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent serviceIntent = new Intent(getApplication(), AccelerationMeasureService.class);
-                if(Build.VERSION.SDK_INT >= 26) {
-                    startForegroundService(serviceIntent);
-                }else{
-                    startService(serviceIntent);
+            public void onClick(View v) {
+                register(tokenEditText.getText().toString());
+                checkServiceRunning();
+                if(!serviceRunning){
+                    startMeasureService();
+                    toggleServiceButton();
                 }
             }
         });
 
-        // サービス停止
-        stopButton.setOnClickListener(new View.OnClickListener() {
+        serviceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent serviceIntent = new Intent(getApplication(), AccelerationMeasureService.class);
-                stopService(serviceIntent);
+                if(serviceRunning){
+                    //Stop Button
+                    stopMeasureService();
+                }else {
+                    //Start Button
+                    startMeasureService();
+                }
+                toggleServiceButton();
             }
         });
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    private void startMeasureService(){
+        Intent serviceIntent = new Intent(self, AccelerationMeasureService.class);
+        if(Build.VERSION.SDK_INT >= 26) {
+            startForegroundService(serviceIntent);
+        }else{
+            startService(serviceIntent);
         }
+    }
 
-        return super.onOptionsItemSelected(item);
+    private void stopMeasureService(){
+        Intent serviceIntent = new Intent(self, AccelerationMeasureService.class);
+        stopService(serviceIntent);
+    }
+
+    public void register(String token){
+
+    }
+
+    public void checkServiceRunning(){
+        // Service実行状態確認
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo serviceInfo : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (AccelerationMeasureService.class.getName().equals(serviceInfo.service.getClassName())) {
+                // Service実行中
+                serviceRunning = true;
+                break;
+            }
+        }
+        changeServiceButton(); // Service実行状態反映
+    }
+
+    private void toggleServiceButton(){
+        serviceRunning = !serviceRunning;
+        changeServiceButton();
+    }
+
+    private void changeServiceButton(){
+        if(serviceRunning){
+            //Stop Button
+            serviceButton.setText(R.string.btn_stop_service);
+        }else {
+            //Start Button
+            serviceButton.setText(R.string.btn_start_service);
+        }
     }
 }
