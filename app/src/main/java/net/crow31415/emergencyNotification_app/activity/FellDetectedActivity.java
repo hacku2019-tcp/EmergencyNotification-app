@@ -18,8 +18,8 @@ import java.util.Locale;
 
 public class FellDetectedActivity extends AppCompatActivity {
 
-    TextView countText;
-    String logTAG;
+    private TextView countText;
+    private String logTAG;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
