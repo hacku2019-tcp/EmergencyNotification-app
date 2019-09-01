@@ -3,7 +3,6 @@ package net.crow31415.emergencyNotification_app.service;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.hardware.Sensor;
@@ -16,15 +15,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import net.crow31415.emergencyNotification_app.R;
+import net.crow31415.emergencyNotification_app.activity.FellDetectedActivity;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+
+import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class AccelerationMeasureService extends Service implements SensorEventListener {
 
     private SensorManager sensorManager;
     private String logTAG;
-    private int emergencyThreshold = 30;
+    //private int emergencyThreshold = 30;
+    private int emergencyThreshold = 12;
 
     @Override
     public void onCreate() {
@@ -41,7 +44,7 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
         // 通知設定
         Notification notification = new NotificationCompat.Builder(getApplicationContext(), channelId)
                 .setContentTitle(getResources().getString(R.string.app_name))
-                .setContentText(getResources().getString(R.string.acceleration_measure_service_text))
+                .setContentText(getResources().getString(R.string.text_acceleration_measure_service))
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .build();
 
@@ -93,24 +96,25 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
             float y = event.values[1];
             float z = event.values[2];
 
+            //ベクトル合成
             double acceleration = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
             Log.d(logTAG, "acceleration: " + acceleration);
 
             if(acceleration >= emergencyThreshold){
                 Toast.makeText(getApplicationContext() , "転倒検知 acceleration: " + acceleration, Toast.LENGTH_LONG).show();
-                emergencyNotification();
+                Log.i(logTAG, "A fall was detected.");
+                sensorManager.unregisterListener(this);
+
+                Intent intent = new Intent(this, FellDetectedActivity.class)
+                        .setFlags(FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+                stopSelf();
             }
         }
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
-
-    private void emergencyNotification(){
-        Log.d(logTAG, "called AccelerationMeasureService.emergencyNotification()");
-        Log.i(logTAG, "A fall was detected.");
 
     }
 }
