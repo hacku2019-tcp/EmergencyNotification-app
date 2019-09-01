@@ -1,4 +1,4 @@
-package net.crow31415.emergencyNotification_app;
+package net.crow31415.emergencyNotification_app.activity;
 
 import android.content.Intent;
 import android.os.Build;
@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -15,9 +16,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 
+import net.crow31415.emergencyNotification_app.R;
 import net.crow31415.emergencyNotification_app.service.AccelerationMeasureService;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final MainActivity self = this;
+    private FirebaseAnalytics mAnalytics;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +30,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        mAnalytics = FirebaseAnalytics.getInstance(self);
 
         Button startButton = findViewById(R.id.button_start);
         Button stopButton = findViewById(R.id.button_stop);
