@@ -16,7 +16,7 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HTTPSUtility extends AsyncTask<String, Void, String> {
 
-    private String responce;
+    private String response;
 
     @Override
     protected String doInBackground(String... strings) {
@@ -82,10 +82,10 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
         Log.d("HTTPSUtility", s);
-        responce = s;
+        response = s;
     }
 
-    public String getResponce() {
-        return responce;
+    public String getResponse() {
+        return response;
     }
 }
