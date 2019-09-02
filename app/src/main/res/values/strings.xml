@@ -12,5 +12,8 @@
     <string name="text_notification_sent">Notification was sent!!</string>
     <string name="btn_register">Register</string>
     <string name="btn_apply">Apply</string>
+    <string name="channel_name_push">Push Notification</string>
+    <string name="channel_description_push">When it\'s detected that registered user fell.</string>
+    <string name="notification_detect_fell_user_registered">Detected that registered user fell!</string>
 
 </resources>

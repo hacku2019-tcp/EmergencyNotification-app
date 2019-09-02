@@ -13,4 +13,7 @@
     <string name="text_notification_sent">通知を送信しました!</string>
     <string name="btn_register">登録</string>
     <string name="btn_apply">適用</string>
+    <string name="channel_name_push">プッシュ通知</string>
+    <string name="channel_description_push">登録ユーザーの転倒検知時</string>
+    <string name="notification_detect_fell_user_registered">登録されているユーザーの異常を検知しました!</string>
 </resources>
