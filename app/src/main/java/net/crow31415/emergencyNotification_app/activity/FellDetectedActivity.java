@@ -20,15 +20,15 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class FellDetectedActivity extends AppCompatActivity {
 
+    private final static String TAG = FellDetectedActivity.class.getSimpleName();
+
     private TextView countText;
-    private String TAG;
     private CountDown countDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fell_detected);
-        TAG = getResources().getString(R.string.app_name);
         Log.d(TAG, "called FellDetectedActivity.onCreate()");
 
         countText = findViewById(R.id.textView_countdown);

@@ -16,6 +16,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class HTTPSUtility extends AsyncTask<String, Void, String> {
 
+    private final static String TAG = HTTPSUtility.class.getSimpleName();
+
     private String response;
 
     @Override
@@ -40,7 +42,7 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
             writer.close();
             connection.connect();
 
-            Log.d("HTTPSUtility", "Connect to: " + strings[0] + " post: " + strings[1]);
+            Log.d(TAG, "Connect to: " + strings[0] + " post: " + strings[1]);
 
             // レスポンスコード確認
             int responseCode = connection.getResponseCode();
@@ -81,7 +83,7 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("HTTPSUtility", "response: " + s);
+        Log.d(TAG, "response: " + s);
         response = s;
     }
 

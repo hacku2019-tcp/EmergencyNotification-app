@@ -31,9 +31,10 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    private final static String TAG = MainActivity.class.getSimpleName();
+
     private final MainActivity self = this;
     private FirebaseAnalytics mAnalytics;
-    private String TAG;
     private TextView idTextView;
     private EditText idEditText;
     private Button applyIDButton;
@@ -52,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mAnalytics = FirebaseAnalytics.getInstance(self);
-        TAG = getResources().getString(R.string.app_name);
         idTextView = findViewById(R.id.id_text_view);
         idEditText = findViewById(R.id.id_edit_text);
         applyIDButton = findViewById(R.id.button_apply_id);

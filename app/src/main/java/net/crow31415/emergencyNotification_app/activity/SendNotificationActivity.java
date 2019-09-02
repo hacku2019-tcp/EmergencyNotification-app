@@ -11,7 +11,8 @@ import net.crow31415.emergencyNotification_app.util.HTTPSUtility;
 
 public class SendNotificationActivity extends AppCompatActivity {
 
-    private String TAG;
+    private final static String TAG = SendNotificationActivity.class.getSimpleName();
+
     private SharedPreferences preferences;
 
     @Override
@@ -19,7 +20,6 @@ public class SendNotificationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_send_notification);
 
-        TAG = getResources().getString(R.string.app_name);
         Log.d(TAG, "called SendNotificationActivity.onCreate()");
 
         preferences = getSharedPreferences("net.crow31415.emergencyNotification_app.preferences", MODE_PRIVATE);

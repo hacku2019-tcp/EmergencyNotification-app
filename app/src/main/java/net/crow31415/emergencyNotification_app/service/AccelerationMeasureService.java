@@ -24,15 +24,15 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class AccelerationMeasureService extends Service implements SensorEventListener {
 
+    private final static String TAG = AccelerationMeasureService.class.getSimpleName();
+
     private SensorManager sensorManager;
-    private String TAG;
     //private int emergencyThreshold = 30;
     private int emergencyThreshold = 12;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        TAG = getResources().getString(R.string.app_name);
         Log.d(TAG, "called AccelerationMeasureService.onCreate()");
         Log.i(TAG, "Started measuring acceleration.");
     }
