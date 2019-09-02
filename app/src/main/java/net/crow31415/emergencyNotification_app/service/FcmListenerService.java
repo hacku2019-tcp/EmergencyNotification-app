@@ -42,7 +42,7 @@ public class FcmListenerService extends FirebaseMessagingService {
                 .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this,0 , intent, PendingIntent.FLAG_ONE_SHOT);
 
-        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         String channelId = "push";
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
 

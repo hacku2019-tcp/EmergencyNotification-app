@@ -3,11 +3,17 @@ package net.crow31415.emergencyNotification_app.activity;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -24,6 +30,7 @@ public class FellDetectedActivity extends AppCompatActivity {
 
     private TextView countText;
     private CountDown countDown;
+    private Vibrator vibrator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +39,7 @@ public class FellDetectedActivity extends AppCompatActivity {
         Log.d(TAG, "called FellDetectedActivity.onCreate()");
 
         countText = findViewById(R.id.textView_countdown);
+        vibrator = getSystemService(Vibrator.class);
         Button notEmergencyButton = findViewById(R.id.button_not_emergency);
 
         notEmergencyButton.setOnClickListener(new View.OnClickListener() {
@@ -40,6 +48,30 @@ public class FellDetectedActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        //スリープ復帰処理
+        Window window = getWindow();
+        if(Build.VERSION.SDK_INT >= 27){
+            this.setTurnScreenOn(true);
+            this.setShowWhenLocked(true);
+        }else {
+            window.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED);
+            window.addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
+        }
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        //通知音鳴動
+        Ringtone ringtone = RingtoneManager.getRingtone(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        ringtone.play();
+
+        //バイブ鳴動
+        long[] timings = {1000, 1500};
+        if(Build.VERSION.SDK_INT >= 26){
+            VibrationEffect vibrationEffect = VibrationEffect.createWaveform(timings, 0);
+            vibrator.vibrate(vibrationEffect);
+        }else {
+            vibrator.vibrate(timings, 0);
+        }
 
         countDown = new CountDown(30 * 1000, 100);
         countDown.start();

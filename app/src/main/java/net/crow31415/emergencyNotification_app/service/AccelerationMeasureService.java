@@ -28,7 +28,7 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
 
     private SensorManager sensorManager;
     //private int emergencyThreshold = 30;
-    private int emergencyThreshold = 12;
+    private int emergencyThreshold = 12; //for Staging
 
     @Override
     public void onCreate() {
