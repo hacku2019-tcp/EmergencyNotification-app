@@ -33,7 +33,7 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
 
             // // POST リクエスト実行
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "text/plain");
+            connection.setRequestProperty("Content-Type", "application/json");
             OutputStream outputStream = connection.getOutputStream();
             BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream));
             writer.write(strings[1]);
@@ -81,7 +81,7 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.d("HTTPSUtility", s);
+        Log.d("HTTPSUtility", "response: " + s);
         response = s;
     }
 

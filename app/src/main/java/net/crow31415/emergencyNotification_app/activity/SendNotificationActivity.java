@@ -32,7 +32,10 @@ public class SendNotificationActivity extends AppCompatActivity {
 
         String userId = preferences.getString("id", null);
 
-        String post = "apiType=notification" + "&userId=" + userId;
+        String post = "{" +
+                "\"apiType\" : \"notification\", " +
+                "\"userId\" : \"" + userId + "\"" +
+                "}";
         HTTPSUtility https = new HTTPSUtility();
         https.execute("https://hacku.dragon-egg.org/api", post);
     }

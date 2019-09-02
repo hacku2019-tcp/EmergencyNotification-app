@@ -139,7 +139,12 @@ public class MainActivity extends AppCompatActivity {
             pushId = preferences.getString("token", null);
         }
 
-        String post = "apiType=register" + "&userId=" + userId + "&noticeUserId=" + noticeUserId + "&pushId=" + pushId;
+        String post = "{" +
+                "\"apiType\" : \"register\", " +
+                "\"userId\" : \"" + userId + "\", " +
+                "\"noticeUserId\" : \"" + noticeUserId + "\", " +
+                "\"pushId\" : \"" + pushId + "\"" +
+                "}";
         HTTPSUtility https = new HTTPSUtility();
         https.execute("https://hacku.dragon-egg.org/api", post);
     }
