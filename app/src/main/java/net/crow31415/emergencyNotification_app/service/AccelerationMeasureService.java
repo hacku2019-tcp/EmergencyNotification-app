@@ -19,6 +19,7 @@ import net.crow31415.emergencyNotification_app.activity.FellDetectedActivity;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 
 public class AccelerationMeasureService extends Service implements SensorEventListener {
@@ -106,7 +107,8 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
                 sensorManager.unregisterListener(this);
 
                 Intent intent = new Intent(this, FellDetectedActivity.class)
-                        .setFlags(FLAG_ACTIVITY_SINGLE_TOP);
+                        .setFlags(FLAG_ACTIVITY_SINGLE_TOP)
+                        .setFlags(FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 stopSelf();
             }
