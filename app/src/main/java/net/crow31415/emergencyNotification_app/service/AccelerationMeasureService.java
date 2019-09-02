@@ -12,7 +12,6 @@ import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
 import net.crow31415.emergencyNotification_app.R;
 import net.crow31415.emergencyNotification_app.activity.FellDetectedActivity;
@@ -25,20 +24,21 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 public class AccelerationMeasureService extends Service implements SensorEventListener {
 
     private SensorManager sensorManager;
-    private String logTAG;
+    private String TAG;
     //private int emergencyThreshold = 30;
     private int emergencyThreshold = 12;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        logTAG = getResources().getString(R.string.app_name);
-        Log.d(logTAG, "called AccelerationMeasureService.onCreate()");
+        TAG = getResources().getString(R.string.app_name);
+        Log.d(TAG, "called AccelerationMeasureService.onCreate()");
+        Log.i(TAG, "Started measuring acceleration.");
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(logTAG, "called AccelerationMeasureService.onStartCommand()");
+        Log.d(TAG, "called AccelerationMeasureService.onStartCommand()");
         String channelId = "detection";
 
         // 通知設定
@@ -77,7 +77,8 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(logTAG, "called AccelerationMeasureService.onDestroy()");
+        Log.d(TAG, "called AccelerationMeasureService.onDestroy()");
+        Log.i(TAG, "Stopped measuring acceleration.");
 
         // センサーへのイベントリスナーの解除
         sensorManager.unregisterListener(this);
@@ -98,11 +99,10 @@ public class AccelerationMeasureService extends Service implements SensorEventLi
 
             //ベクトル合成
             double acceleration = Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2) + Math.pow(z, 2));
-            Log.d(logTAG, "acceleration: " + acceleration);
 
             if(acceleration >= emergencyThreshold){
-                Toast.makeText(getApplicationContext() , "転倒検知 acceleration: " + acceleration, Toast.LENGTH_LONG).show();
-                Log.i(logTAG, "A fall was detected.");
+                Log.d(TAG, "acceleration: " + acceleration);
+                Log.i(TAG, "A fall was detected.");
                 sensorManager.unregisterListener(this);
 
                 Intent intent = new Intent(this, FellDetectedActivity.class)

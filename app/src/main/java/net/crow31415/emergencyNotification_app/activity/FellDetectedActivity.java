@@ -21,14 +21,15 @@ import static android.content.Intent.FLAG_ACTIVITY_SINGLE_TOP;
 public class FellDetectedActivity extends AppCompatActivity {
 
     private TextView countText;
-    private String logTAG;
+    private String TAG;
     private CountDown countDown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fell_detected);
-        logTAG = getResources().getString(R.string.app_name);
+        TAG = getResources().getString(R.string.app_name);
+        Log.d(TAG, "called FellDetectedActivity.onCreate()");
 
         countText = findViewById(R.id.textView_countdown);
         Button notEmergencyButton = findViewById(R.id.button_not_emergency);
@@ -42,11 +43,14 @@ public class FellDetectedActivity extends AppCompatActivity {
 
         countDown = new CountDown(30 * 1000, 100);
         countDown.start();
+        Log.d(TAG, "Countdown start");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        Log.d(TAG, "called FellDetectedActivity.onDestroy()");
 
         countDown.cancel();
 
@@ -59,6 +63,8 @@ public class FellDetectedActivity extends AppCompatActivity {
     }
 
     public void sendNotification(){
+        Log.d(TAG, "called FellDetectedActivity.sendNotification()");
+
         Intent intent = new Intent(this, SendNotificationActivity.class)
                 .setFlags(FLAG_ACTIVITY_SINGLE_TOP);
         startActivity(intent);
@@ -79,9 +85,6 @@ public class FellDetectedActivity extends AppCompatActivity {
         // インターバルで呼ばれる
         @Override
         public void onTick(long millisUntilFinished) {
-
-            Log.d(logTAG, "countdown millisUntilFinished: " + millisUntilFinished);
-
             long ss = millisUntilFinished / 1000 % 60;
             long ms = millisUntilFinished - ss * 1000;
             ms = ms / 100; //表示桁数減らし

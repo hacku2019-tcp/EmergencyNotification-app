@@ -40,6 +40,8 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
             writer.close();
             connection.connect();
 
+            Log.d("HTTPSUtility", "Connect to: " + strings[0] + " post: " + strings[1]);
+
             // レスポンスコード確認
             int responseCode = connection.getResponseCode();
             if(responseCode != HttpsURLConnection.HTTP_OK) {
