@@ -51,7 +51,7 @@ public class HTTPSUtility extends AsyncTask<String, Void, String> {
             //レスポンス取得
             inputStream = connection.getInputStream();
             if(inputStream != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+                BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
                 String line;
                 while ((line = reader.readLine()) != null) {
                     sb.append(line);
