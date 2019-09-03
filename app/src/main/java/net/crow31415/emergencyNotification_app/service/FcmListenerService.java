@@ -70,4 +70,11 @@ public class FcmListenerService extends FirebaseMessagingService {
 
         notificationManager.notify(2, notification);
     }
+
+    @Override
+    public void onNewToken(String token) {
+        Log.d(TAG, "Refreshed token: " + token);
+
+        getSharedPreferences("net.crow31415.emergencyNotification_app.preferences", MODE_PRIVATE).edit().putString("token", token).apply();
+    }
 }

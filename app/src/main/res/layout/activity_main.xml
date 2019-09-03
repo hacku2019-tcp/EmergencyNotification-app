@@ -45,11 +45,11 @@
                 android:hint="Your ID" />
 
             <Button
-                android:id="@+id/button_apply_id"
+                android:id="@+id/button_register_id"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/btn_apply" />
+                android:text="@string/btn_register" />
 
         </LinearLayout>
 
@@ -68,7 +68,7 @@
                 android:hint="ID" />
 
             <Button
-                android:id="@+id/button_register"
+                android:id="@+id/button_register_user"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"

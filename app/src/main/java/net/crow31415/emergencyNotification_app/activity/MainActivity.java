@@ -30,8 +30,6 @@ import net.crow31415.emergencyNotification_app.R;
 import net.crow31415.emergencyNotification_app.service.AccelerationMeasureService;
 import net.crow31415.emergencyNotification_app.util.HTTPSUtility;
 
-import java.util.Locale;
-
 public class MainActivity extends AppCompatActivity {
 
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -40,9 +38,9 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseAnalytics mAnalytics;
     private TextView idTextView;
     private EditText idEditText;
-    private Button applyIDButton;
+    private Button registerIdButton;
     private EditText noticeUserEditText;
-    private Button registerButton;
+    private Button registerNotificationButton;
     private Button serviceButton;
     private SharedPreferences preferences;
 
@@ -58,26 +56,27 @@ public class MainActivity extends AppCompatActivity {
         mAnalytics = FirebaseAnalytics.getInstance(self);
         idTextView = findViewById(R.id.id_text_view);
         idEditText = findViewById(R.id.id_edit_text);
-        applyIDButton = findViewById(R.id.button_apply_id);
+        registerIdButton = findViewById(R.id.button_register_id);
         noticeUserEditText = findViewById(R.id.notice_user_edit_text);
-        registerButton = findViewById(R.id.button_register);
+        registerNotificationButton = findViewById(R.id.button_register_user);
         serviceButton = findViewById(R.id.button_toggle_service);
         preferences = getSharedPreferences("net.crow31415.emergencyNotification_app.preferences", MODE_PRIVATE);
 
         initID();
         checkServiceRunning();
+        getFirebaseToken();
 
-        applyIDButton.setOnClickListener(new View.OnClickListener() {
+        registerIdButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                applyID(idEditText.getText().toString());
+                registerId(idEditText.getText().toString());
             }
         });
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
+        registerNotificationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                register(noticeUserEditText.getText().toString());
+                registerNotification(noticeUserEditText.getText().toString());
                 checkServiceRunning();
                 if(!serviceRunning){
                     startMeasureService();
@@ -117,36 +116,58 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initID(){
-        if(preferences.getString("id", null) == null){
-            int r = (int)(Math.random() * 10000);
-            applyID(String.format(Locale.JAPAN, "NoID%5d", r));
-        }
-        applyID("");
+        applyID();
     }
 
-    private void applyID(String id){
-        if(!id.equals("")){
-            preferences.edit().putString("id", id).apply();
-
-            Log.d(TAG, "set ID: " + id);
+    private void applyID(){
+        String id = preferences.getString("id", null);
+        if(id == null) {
+            id = "";
         }
-        id = preferences.getString("id", null);
         idTextView.setText("User ID: " + id);
     }
 
-    public void register(String noticeUserId){
+    private void registerId(String id){
+        if(!id.equals("")){
+            preferences.edit().putString("id", id).apply();
+
+            Log.d(TAG, "register ID: " + id);
+        }
+
+        //call API
         String userId = preferences.getString("id", null);
         String pushId = preferences.getString("token", null);
+        /*
         if(pushId == null){
             getFirebaseToken();
             pushId = preferences.getString("token", null);
+
+            while (pushId == null){
+                pushId = preferences.getString("token", null);
+            }
+            Log.d(TAG, "token: " + pushId);
         }
 
+         */
+
         String post = "{" +
-                "\"apiType\" : \"register\", " +
+                "\"apiType\" : \"registerToken\", " +
                 "\"userId\" : \"" + userId + "\", " +
-                "\"noticeUserId\" : \"" + noticeUserId + "\", " +
                 "\"pushId\" : \"" + pushId + "\"" +
+                "}";
+        HTTPSUtility https = new HTTPSUtility();
+        https.execute("https://hacku.dragon-egg.org/api", post);
+
+        applyID();
+    }
+
+    public void registerNotification(String notificationId){
+        String userId = preferences.getString("id", null);
+
+        String post = "{" +
+                "\"apiType\" : \"registerNotification\", " +
+                "\"userId\" : \"" + userId + "\", " +
+                "\"notificationId\" : \"" + notificationId + "\"" +
                 "}";
         HTTPSUtility https = new HTTPSUtility();
         https.execute("https://hacku.dragon-egg.org/api", post);
